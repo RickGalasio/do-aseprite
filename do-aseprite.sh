@@ -23,12 +23,12 @@ sudo apt -y install \
   libluajit-5.1-dev
 
 VER_ASE=$(dialog --no-ok --no-cancel --title "Aseprite Branches" --menu "Aseprite Ver."  0 0 0 $(git ls-remote --tags https://github.com/aseprite/aseprite | sed -e 's|.*refs/tags/||g' | awk '{print $1 " " $1}') --stdout)
+VER_SKIA=$(dialog --no-ok --no-cancel --title "SKIA Branches" --menu "SKIA Ver."  0 0 0 $(git ls-remote --tags https://github.com/aseprite/skia | sed -e 's|.*refs/tags/||g' | awk '{print $1 " " $1}') --stdout)
 
 #Downloads dos fontes
 git clone -b $VER_ASE https://github.com/aseprite/aseprite.git --recurse-submodules aseprite-$VER_ASE/
 git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
 
-VER_SKIA=$(dialog --no-ok --no-cancel --title "SKIA Branches" --menu "SKIA Ver."  0 0 0 $(git ls-remote --tags https://github.com/aseprite/skia | sed -e 's|.*refs/tags/||g' | awk '{print $1 " " $1}') --stdout)
 git clone -b $VER_SKIA https://github.com/aseprite/skia.git
 
 #Adiciona o caminho das ferramentas ao PATH
