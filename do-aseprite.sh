@@ -5,7 +5,9 @@
 AQUI=$(pwd)
 
 #Download requisitos
-sudo apt install \
+sudo apt -y install \
+  dialog \
+  python \
   g++ \
   cmake \
   ninja-build \
@@ -15,19 +17,19 @@ sudo apt install \
   libgl1-mesa-dev \
   libfontconfig1-dev \
   git \
-  python \
   libharfbuzz-dev \
   liblua5.1-0-dev \
   liblua5.3-dev \
-  libluajit-5.1-dev\
-dialog
+  libluajit-5.1-dev
 
 VER_ASE=$(dialog --no-ok --no-cancel --title "Aseprite Branches" --menu "Aseprite Ver."  0 0 0 $(git ls-remote --tags https://github.com/aseprite/aseprite | sed -e 's|.*refs/tags/||g' | awk '{print $1 " " $1}') --stdout)
 
 #Downloads dos fontes
 git clone -b $VER_ASE https://github.com/aseprite/aseprite.git --recurse-submodules aseprite-$VER_ASE/
 git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
-git clone -b aseprite-m96 https://github.com/aseprite/skia.git
+
+VER_SKIA=$(dialog --no-ok --no-cancel --title "SKIA Branches" --menu "SKIA Ver."  0 0 0 $(git ls-remote --tags https://github.com/aseprite/skia | sed -e 's|.*refs/tags/||g' | awk '{print $1 " " $1}') --stdout)
+git clone -b $VER_SKIA https://github.com/aseprite/skia.git
 
 #Adiciona o caminho das ferramentas ao PATH
 export PATH="${PWD}/depot_tools:${PATH}"
