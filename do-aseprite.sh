@@ -1,7 +1,7 @@
 #!/bin/bash
 # Rick Galasio (Ricardo Leite Gonçalves)
 # 25/01/2020
-
+# 21/11/2023
 
 set -ev
 
@@ -43,6 +43,7 @@ sudo apt -y install \
 #wget https://github.com/Kitware/CMake/releases/download/<version>/cmake-<version>.tar.gz
 
 VER_ASE=$(dialog --no-ok --no-cancel --title "Aseprite Branches" --menu "Aseprite Ver."  0 0 0 $(git ls-remote --tags https://github.com/aseprite/aseprite | sed -e 's|.*refs/tags/||g' | awk '{print $1 " " $1}') --stdout)
+
 VER_SKIA=$(dialog --no-ok --no-cancel --title "SKIA Branches" --menu "SKIA Ver."  0 0 0 $(git ls-remote --tags https://github.com/aseprite/skia | sed -e 's|.*refs/tags/||g' | awk '{print $1 " " $1}') --stdout)
 
 #Downloads dos fontes
@@ -51,6 +52,9 @@ if [ ! -d aseprite-$VER_ASE ]; then
    git clone -b $VER_ASE https://github.com/aseprite/aseprite.git --recurse-submodules aseprite-$VER_ASE/
 fi
 
+sed -i'' -e "s|^set(VERSION .*|set(VERSION \"${VER_ASE:1}\")|g" ./aseprite-${VER_ASE}/src/ver/CMakeLists.txt
+
+
 if [ ! -d depot_tools ]; then
    git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
 fi
@@ -58,6 +62,7 @@ fi
 if [ ! -d skia ]; then
    git clone -b $VER_SKIA https://github.com/aseprite/skia.git
 fi
+
 
 #Adiciona o caminho das ferramentas ao PATH
 export PATH="${PWD}/depot_tools:${PATH}"
@@ -85,7 +90,7 @@ cmake \
    -DSKIA_LIBRARY=$AQUI/skia/out/Release-x64/libskia.a \
 -G Ninja ..
 
-ninja aseprite
+ninja -j $(nproc) aseprite
 
 cd ..
 mv build aseprite-${VER_ASE}
